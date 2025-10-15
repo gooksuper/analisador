@@ -16,7 +16,7 @@ def index():
 # Rota da API ('/api/results') que nosso site vai chamar
 @app.route('/api/results')
 def get_blaze_data():
-    try
+    try:
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         }
@@ -24,7 +24,5 @@ def get_blaze_data():
         response.raise_for_status()
         return jsonify(response.json())
     except requests.exceptions.RequestException as e:
+        print(f"Erro ao buscar dados da Blaze: {e}")
         return jsonify({"error": str(e)}), 500
-
-# O 'if __name__ == '__main__':' não é necessário para produção,
-# pois o servidor de hospedagem (Gunicorn) cuidará de iniciar o app.
