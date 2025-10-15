@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blaze Analyzer X - Versão Final</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* ... Cole aqui TODO o CSS da sua última versão ... */
+        /* (O CSS não muda, então para economizar espaço, não o repeti aqui, mas você deve colá-lo) */
+        :root {
+            --bg-main: #10111A;
+            --bg-glass: rgba(38, 40, 59, 0.6);
+            --bg-glass-light: rgba(50, 52, 75, 0.7);
+            --border-color: rgba(138, 143, 187, 0.2);
+            --text-primary: #EAEBF1;
+            --text-secondary: #8A8FBB;
+            --primary-accent: #8A3FFC;
+            --primary-accent-light: #A56FFF;
+            --red-color: #FF4757;
+            --black-color: #3D415B;
+            --white-color: #FFFFFF;
+            --white-text: #10111A;
+            --green-accent: #00FFAB;
+            --orange-accent: #FFB86C;
+            --font-family: 'Inter', sans-serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: var(--font-family); background-color: var(--bg-main); color: var(--text-primary); overflow-x: hidden; }
+        .main-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: var(--bg-glass); border-bottom: 1px solid var(--border-color); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 1000; }
+        .header-brand { display: flex; align-items: center; gap: 15px; font-size: 24px; font-weight: 700; color: var(--primary-accent-light); }
+        .header-brand i { font-size: 28px; }
+        .status-indicator { display: flex; align-items: center; gap: 10px; padding: 12px; background-color: var(--bg-glass-light); border-radius: 12px; }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; background-color: var(--green-accent); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(0, 255, 171, 0.7); } 50% { box-shadow: 0 0 0 8px rgba(0, 255, 171, 0); } }
+        .content-area { padding: 40px; max-width: 1600px; margin: 0 auto; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin-bottom: 30px; }
+        .stat-card { background: var(--bg-glass); border: 1px solid var(--border-color); border-radius: 16px; padding: 25px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+        .stat-card-title { font-size: 16px; margin-bottom: 15px; color: var(--text-secondary); display: flex; align-items: center; gap: 10px; }
+        .white-analysis-grid p { font-size: 14px; display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border-color); }
+        .white-analysis-grid p:last-child { border-bottom: none; }
+        .white-analysis-grid span { font-weight: 600; color: var(--text-primary); }
+        .main-content-grid { display: grid; grid-template-columns: 1fr; }
+        .results-panel { background: var(--bg-glass); border: 1px solid var(--border-color); border-radius: 16px; padding: 25px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .panel-header h2 { font-size: 20px; }
+        .panel-actions { display: flex; align-items: center; gap: 15px; }
+        .btn-icon { background: var(--bg-glass-light); color: var(--text-primary); border: none; border-radius: 10px; width: 40px; height: 40px; font-size: 16px; cursor: pointer; transition: all 0.3s ease; }
+        .btn-icon:hover { background-color: var(--primary-accent); }
+        .results-grid { display: grid; grid-template-columns: repeat(20, 1fr); gap: 10px; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .result-container { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .result-item { width: 100%; aspect-ratio: 1; border-radius: 12px; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; position: relative; background-size: contain; background-position: center; background-repeat: no-repeat; }
+        .result-number { font-size: 22px; font-weight: 700; }
+        .result-time { font-size: 12px; font-weight: 500; color: var(--text-secondary); }
+        .result-item-placeholder { width: 100%; aspect-ratio: 1; }
+        .result-item.red { background-image: url('https://kitblaze.com/wp-content/themes/kitblaze2/assets/images/red-0.svg'); }
+        .result-item.black { background-image: url('https://kitblaze.com/wp-content/themes/kitblaze2/assets/images/black-0.svg'); }
+        .result-item.white { background-image: url('https://kitblaze.com/wp-content/themes/kitblaze2/assets/images/white.svg'); }
+        @media (max-width: 768px) {
+            .main-header { padding: 15px 20px; }
+            .header-brand span { display: none; }
+            .content-area { padding: 20px; }
+            .result-item.red { background-image: none; background-color: var(--red-color); }
+            .result-item.black { background-image: none; background-color: var(--black-color); }
+            .results-grid { gap: 5px; }
+            .result-number { font-size: 16px; }
+            .result-time { font-size: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="header-brand"><i class="fa-solid fa-rocket"></i><span>Analyzer X</span></div>
+        <div id="status-indicator" class="status-indicator">
+            <div class="status-dot"></div><span id="connection-status">Conectando...</span>
+        </div>
+    </header>
+
+    <main class="content-area">
+        <div id="dashboard" class="tab-content active">
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <h3 class="stat-card-title"><i class="fa-solid fa-gem"></i> Análise de Brancos</h3>
+                    <div class="white-analysis-grid">
+                        <p>Giros desde o último: <span id="white-rounds-since">--</span></p>
+                        <p>Maior intervalo sem: <span id="white-max-gap">--</span></p>
+                        <p>Intervalo médio: <span id="white-avg-gap">--</span></p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <h3 class="stat-card-title"><i class="fa-solid fa-lightbulb"></i> Estratégia Sugerida</h3>
+                    <div id="strategy-suggestion"><p>Analisando dados...</p></div>
+                </div>
+            </div>
+            <div class="main-content-grid">
+                <div class="results-panel">
+                    <div class="panel-header">
+                        <h2>Histórico Alinhado por Minuto</h2>
+                        <div class="panel-actions">
+                            <button id="toggle-order-btn" class="btn-icon" title="Inverter Ordem"><i class="fa-solid fa-arrow-left-long"></i></button>
+                            <div id="loading-spinner" style="display: none;"><i class="fa-solid fa-spinner fa-spin"></i></div>
+                        </div>
+                    </div>
+                    <div class="results-grid" id="results-grid"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        class BlazeAnalyzerX {
+            constructor() {
+                this.results = [];
+                this.refreshIntervalId = null;
+                this.isOrderReversed = false;
+                this.REFRESH_RATE = 4000;
+                // --- MUDANÇA CRUCIAL: Apontando para um caminho relativo ---
+                this.API_ENDPOINT = '/api/results'; // Não mais 'localhost'
+                this.init();
+            }
+            
+            init() {
+                console.log("Inicializando o Blaze Analyzer X (Versão de Produção)...");
+                this.bindUI();
+                this.setupEventListeners();
+                this.fetchInitialData();
+            }
+
+            // ... Cole aqui TODO o JavaScript da sua última versão ...
+            // (O JS não muda, exceto pelo API_ENDPOINT, então para economizar espaço,
+            // não o repeti aqui, mas você deve colá-lo)
+            bindUI() {
+                this.ui = {
+                    resultsGrid: document.getElementById('results-grid'),
+                    strategySuggestion: document.getElementById('strategy-suggestion'),
+                    whiteRoundsSince: document.getElementById('white-rounds-since'),
+                    whiteMaxGap: document.getElementById('white-max-gap'),
+                    whiteAvgGap: document.getElementById('white-avg-gap'),
+                    loadingSpinner: document.getElementById('loading-spinner'),
+                    connectionStatus: document.getElementById('connection-status'),
+                    statusDot: document.querySelector('.status-dot'),
+                    toggleOrderBtn: document.getElementById('toggle-order-btn')
+                };
+            }
+            setupEventListeners() { this.ui.toggleOrderBtn.addEventListener('click', () => this.toggleResultOrder()); }
+            async fetchInitialData() {
+                this.ui.loadingSpinner.style.display = 'block';
+                try {
+                    await this.fetchData();
+                    this.updateAllUI();
+                    this.startAutoRefresh();
+                    this.updateConnectionStatus(true, 'Conectado');
+                } catch (error) {
+                    console.error("Falha ao carregar dados iniciais:", error);
+                    this.updateConnectionStatus(false, 'Erro de Conexão');
+                    this.ui.resultsGrid.innerHTML = `<p style="color:var(--red-color); text-align:center;">Falha ao conectar ao servidor. Verifique o console para mais detalhes.</p>`;
+                } finally {
+                    this.ui.loadingSpinner.style.display = 'none';
+                }
+            }
+            async fetchData() {
+                const response = await fetch(this.API_ENDPOINT);
+                if (!response.ok) throw new Error(`Servidor respondeu com erro: ${response.status}`);
+                const data = await response.json();
+                if (data.error) throw new Error(`Erro no servidor Python: ${data.error}`);
+                if (!Array.isArray(data.records)) throw new Error("Formato de dados da API inválido.");
+                this.results = data.records.map(record => ({ id: record.id, roll: record.roll, color: this.getColorFromRoll(record.roll), timestamp: new Date(record.created_at) }));
+            }
+            updateAllUI() { this.updateWhiteAnalysisPanel(); this.renderAlignedGrid(); }
+            renderAlignedGrid() {
+                if (this.results.length === 0) return;
+                this.ui.resultsGrid.innerHTML = '';
+                const resultMap = new Map(this.results.map(r => [r.id, r]));
+                const latestTime = this.results[0].timestamp;
+                const gridElements = [];
+                const usedResults = new Set();
+                for (let i = 0; i < 100; i++) {
+                    const timeOffset = i * 30 * 1000;
+                    const targetTime = new Date(latestTime.getTime() - timeOffset);
+                    let closestResult = null;
+                    let smallestDiff = Infinity;
+                    for (const result of resultMap.values()) {
+                        if (!usedResults.has(result.id)) {
+                            const diff = Math.abs(result.timestamp - targetTime);
+                            if (diff < smallestDiff && diff < 15000) { smallestDiff = diff; closestResult = result; }
+                        }
+                    }
+                    if (closestResult) { usedResults.add(closestResult.id); }
+                    gridElements.push(this.createGridElement(closestResult));
+                }
+                if (this.isOrderReversed) {
+                    const chunked = [];
+                    for (let i = 0; i < gridElements.length; i += 20) {
+                        chunked.push(gridElements.slice(i, i + 20).reverse());
+                    }
+                    gridElements.splice(0, gridElements.length, ...chunked.flat());
+                }
+                gridElements.forEach(element => { this.ui.resultsGrid.appendChild(element); });
+            }
+            createGridElement(result) {
+                const container = document.createElement('div');
+                container.className = 'result-container';
+                if (result) {
+                    const item = document.createElement('div');
+                    item.className = `result-item ${result.color}`;
+                    if (result.color !== 'white') { item.innerHTML = `<span class="result-number">${result.roll}</span>`; }
+                    const time = document.createElement('div');
+                    time.className = 'result-time';
+                    time.textContent = result.timestamp.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                    container.appendChild(item);
+                    container.appendChild(time);
+                } else {
+                    const placeholder = document.createElement('div');
+                    placeholder.className = 'result-item-placeholder';
+                    container.appendChild(placeholder);
+                }
+                return container;
+            }
+            updateWhiteAnalysisPanel() {
+                const whiteGaps = this.getWhiteGaps();
+                const roundsSinceWhite = this.results.findIndex(r => r.color === 'white');
+                const maxGap = Math.max(0, ...whiteGaps);
+                const avgGap = whiteGaps.length > 0 ? Math.round(whiteGaps.reduce((a, b) => a + b, 0) / whiteGaps.length) : 0;
+                this.ui.whiteRoundsSince.textContent = roundsSinceWhite === -1 ? this.results.length : roundsSinceWhite;
+                this.ui.whiteMaxGap.textContent = maxGap;
+                this.ui.whiteAvgGap.textContent = avgGap;
+                this.ui.strategySuggestion.innerHTML = `<p>${this.getWhiteStrategySuggestion(roundsSinceWhite, avgGap, maxGap)}</p>`;
+            }
+            getWhiteStrategySuggestion(currentGap, avgGap, maxGap) {
+                if (currentGap === -1) currentGap = this.results.length;
+                if (avgGap === 0) return "Aguardando mais dados sobre brancos para gerar uma estratégia.";
+                if (currentGap >= maxGap && maxGap > 0) return `<strong>Alerta Máximo:</strong> O intervalo atual (${currentGap}) ultrapassou o maior já registrado (${maxGap}). A probabilidade é historicamente alta.`;
+                if (currentGap >= avgGap * 1.5) return `<strong>Atenção:</strong> O intervalo atual (${currentGap}) está 50% acima da média (${avgGap}). A probabilidade é consideravelmente alta.`;
+                if (currentGap >= avgGap) return `<strong>Observação:</strong> O intervalo atual (${currentGap}) está se aproximando ou ultrapassou a média (${avgGap}). A probabilidade está aumentando.`;
+                return "O intervalo de brancos está dentro da média. Nenhuma estratégia de alto potencial detectada no momento.";
+            }
+            getWhiteGaps() {
+                const gaps = [];
+                let lastWhiteIndex = -1;
+                this.results.forEach((result, index) => {
+                    if (result.color === 'white') {
+                        if (lastWhiteIndex !== -1) { gaps.push(index - lastWhiteIndex); }
+                        lastWhiteIndex = index;
+                    }
+                });
+                return gaps;
+            }
+            startAutoRefresh() {
+                if (this.refreshIntervalId) clearInterval(this.refreshIntervalId);
+                this.refreshIntervalId = setInterval(async () => {
+                    try {
+                        await this.fetchData();
+                        this.updateAllUI();
+                        this.updateConnectionStatus(true, 'Conectado');
+                    } catch (error) {
+                        console.error("Erro na atualização automática:", error);
+                        this.updateConnectionStatus(false, 'Erro de Conexão');
+                    }
+                }, this.REFRESH_RATE);
+            }
+            toggleResultOrder() {
+                this.isOrderReversed = !this.isOrderReversed;
+                const icon = this.ui.toggleOrderBtn.querySelector('i');
+                icon.className = this.isOrderReversed ? 'fa-solid fa-arrow-right-long' : 'fa-solid fa-arrow-left-long';
+                this.renderAlignedGrid();
+            }
+            updateConnectionStatus(isOk, message) {
+                this.ui.connectionStatus.textContent = message;
+                this.ui.statusDot.style.backgroundColor = isOk ? 'var(--green-accent)' : 'var(--red-color)';
+            }
+            getColorFromRoll(roll) {
+                if (roll === 0) return 'white';
+                if (roll >= 1 && roll <= 7) return 'red';
+                return 'black';
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => { window.analyzer = new BlazeAnalyzerX(); });
+    </script>
+</body>
+</html>
